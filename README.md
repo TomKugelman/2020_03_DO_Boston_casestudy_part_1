@@ -43,5 +43,5 @@ Please follow the live [document](https://docs.google.com/document/d/17OwlITE-yP
 
 
 ## Here is a visual representation of our pipeline
-![screenshot](Flowchart.PNG)
+![screenshot](pipeline.PNG)
 
