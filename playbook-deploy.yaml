@@ -1,0 +1,5 @@
+---
+    - name: Play 1 - Install application
+      hosts: worker
+      remote_user: tom
+      
