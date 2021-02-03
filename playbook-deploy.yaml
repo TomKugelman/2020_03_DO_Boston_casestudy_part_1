@@ -1,5 +1,42 @@
+name: Play 1
+hosts: worker
+become_user: tom
+tasks:
+  - name: apt update
+    command: apt update
+  - name: Install Minikube
+    command: [wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64, chmod +x minikube-linux-amd64, sudo mv minikube-linux-amd64 /usr/local/bin/minikube]
+  - name: Install kubectl
+    command: [curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl, chmod +x ./kubectl, sudo mv ./kubectl /usr/local/bin/kubectl]
+  - name: Install Docker CE Pre-reqs
+    apt:
+      name: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg2', 'software-properties-common']
+      update_cache: yes
+  - name: Add Docker GPG key
+    apt_key: url=https://download.docker.com/linux/ubuntu/gpg
+  - name: Add Docker API Repo
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+  - name: Install Docker CE
+    apt:
+      name: ['docker-ce', 'docker-ce-cli', 'containerd.io']
+      state: present
+      update_cache: yes
+
 ---
-    - name: Play 1 - Install application
-      hosts: worker
-      remote_user: tom
-      
+name: Play 2
+hosts: worker
+become_user: tom
+tasks: 
+  - name: Copy kubernetes YAML
+    ansible.builtin.copy:
+      src: /App/kubernetes.yml
+      dest: /etc/kubernetes.yml
+      owner: tom
+      mode: 7777
+  - name: Start minikube
+    command: minikube Start
+  - name: Apply kubernetes YAML
+    command: kubetcl create -f /App/kubernetes.yml
+
+
