@@ -4,8 +4,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                dir('App') {
-                    sh "git clone https://github.com/TomKugelman/2020_03_DO_Boston_casestudy_part_1.git"
+                dir('/App') {
+                    git url: 'https://github.com/TomKugelman/2020_03_DO_Boston_casestudy_part_1.git'
                     sh "docker build -t tomkugelman/capstone-flask:latest ."
                     withDockerRegistry([ credentialsID: "DockerHub"]) {
                         sh "docker push tomkugelman/capstone-flask:latest"
@@ -15,8 +15,8 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                dir('App') {
-                    sh 'ANSIBLE PLAYBOOK CALL HERE'
+                dir('/App') {
+                    sh 'playbook-deploy.yaml'
                     deleteDir()
                 }
             }
